@@ -5,6 +5,7 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
+load_dotenv('.env.production')
 
 from app.config import settings
 from app.routes import auth, goals, voice, health
