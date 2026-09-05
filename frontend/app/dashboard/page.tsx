@@ -35,7 +35,7 @@ export default function DashboardPage() {
     setGoalsLoading(true);
     const response = await api.goals.list();
     if (response.data) {
-      setGoals(Array.isArray(response.data) ? response.data : []);
+      setGoals(Array.isArray(response.data) ? (response.data as Goal[]) : []);
     }
     setGoalsLoading(false);
   };
@@ -50,8 +50,8 @@ export default function DashboardPage() {
       completed: false,
     });
 
-    if (response.data) {
-      setGoals([...goals, response.data]);
+    if (response.data && typeof response.data === 'object' && 'id' in response.data) {
+      setGoals([...goals, response.data as Goal]);
       setNewGoalTitle('');
     }
   };
