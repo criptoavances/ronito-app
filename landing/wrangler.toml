@@ -1,0 +1,7 @@
+name = "ronito-landing"
+compatibility_date = "2026-07-01"
+pages_build_output_dir = "public"
+
+[[kv_namespaces]]
+binding = "WAITLIST"
+id = "4fc9f49a09d347c0b4a1f8505a90f89e"
