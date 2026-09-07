@@ -4,19 +4,21 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../lib/auth-context';
 import { api } from '../../lib/api';
-
-interface Goal {
-  id: string;
-  title: string;
-  level: string;
-  completed: boolean;
-}
+import GoalHierarchy from '../../components/dashboard/GoalHierarchy';
+import TimeBlockCalendar from '../../components/dashboard/TimeBlockCalendar';
+import DailyStats from '../../components/dashboard/DailyStats';
+import QuickActions from '../../components/dashboard/QuickActions';
 
 export default function DashboardPage() {
   const router = useRouter();
   const { user, loading, logout, isAuthenticated } = useAuth();
-  const [goals, setGoals] = useState<Goal[]>([]);
-  const [newGoalTitle, setNewGoalTitle] = useState('');
+  const [bigGoal, setBigGoal] = useState(null);
+  const [yearlyGoals, setYearlyGoals] = useState([]);
+  const [monthlyGoals, setMonthlyGoals] = useState([]);
+  const [weeklyGoals, setWeeklyGoals] = useState([]);
+  const [dailyGoals, setDailyGoals] = useState([]);
+  const [timeBlocks, setTimeBlocks] = useState([]);
+  const [stats, setStats] = useState({ total: 0, completed: 0, streak: 0 });
   const [goalsLoading, setGoalsLoading] = useState(false);
 
   useEffect(() => {
@@ -27,32 +29,39 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      fetchGoals();
+      fetchData();
     }
   }, [isAuthenticated]);
 
-  const fetchGoals = async () => {
+  const fetchData = async () => {
     setGoalsLoading(true);
-    const response = await api.goals.list();
-    if (response.data) {
-      setGoals(Array.isArray(response.data) ? (response.data as Goal[]) : []);
-    }
-    setGoalsLoading(false);
-  };
+    try {
+      const [big, yearly, monthly, weekly, daily, blocks] = await Promise.all([
+        api.goals.big.get(),
+        api.goals.yearly.list(),
+        api.goals.monthly.list(),
+        api.goals.weekly.list(),
+        api.goals.daily.list(),
+        api.timeBlocks.list(),
+      ]);
 
-  const addGoal = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newGoalTitle.trim()) return;
+      setBigGoal(big?.data || null);
+      setYearlyGoals(yearly.data || []);
+      setMonthlyGoals(monthly.data || []);
+      setWeeklyGoals(weekly.data || []);
+      setDailyGoals(daily.data || []);
+      setTimeBlocks(blocks.data || []);
 
-    const response = await api.goals.create({
-      title: newGoalTitle,
-      level: 'daily',
-      completed: false,
-    });
-
-    if (response.data && typeof response.data === 'object' && 'id' in response.data) {
-      setGoals([...goals, response.data as Goal]);
-      setNewGoalTitle('');
+      const completed = (daily.data || []).filter((g) => g.completed).length;
+      setStats({
+        total: (daily.data || []).length,
+        completed,
+        streak: 7,
+      });
+    } catch (error) {
+      console.error('Failed to fetch dashboard data:', error);
+    } finally {
+      setGoalsLoading(false);
     }
   };
 
@@ -67,92 +76,94 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50">
       {/* Header */}
-      <header className="bg-white shadow">
+      <header className="bg-white shadow sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-purple-600">RONITO</h1>
             <p className="text-gray-600 text-sm">Welcome, {user?.name || user?.email}</p>
           </div>
-          <button
-            onClick={logout}
-            className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg"
-          >
-            Logout
-          </button>
+          <div className="flex gap-4">
+            <button
+              onClick={() => router.push('/morning')}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg"
+            >
+              Morning
+            </button>
+            <button
+              onClick={logout}
+              className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg"
+            >
+              Logout
+            </button>
+          </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {/* Today's Stats */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-gray-600 text-sm font-semibold mb-2">Today's Goals</h3>
-            <p className="text-3xl font-bold text-purple-600">3</p>
-          </div>
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-gray-600 text-sm font-semibold mb-2">Completed</h3>
-            <p className="text-3xl font-bold text-green-600">0</p>
-          </div>
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-gray-600 text-sm font-semibold mb-2">Streak</h3>
-            <p className="text-3xl font-bold text-blue-600">7 days</p>
+      {/* BIG GOAL Banner */}
+      {bigGoal && (
+        <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <h2 className="text-2xl font-bold mb-2">Your Why</h2>
+            <p className="text-lg">{bigGoal.title}</p>
+            {bigGoal.why && <p className="text-purple-100 mt-2 italic">{bigGoal.why}</p>}
           </div>
         </div>
+      )}
 
-        {/* Goals Section */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Daily Goals</h2>
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left Column: Goals Hierarchy */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Stats Cards */}
+            <DailyStats stats={stats} />
 
-          <form onSubmit={addGoal} className="mb-6">
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={newGoalTitle}
-                onChange={(e) => setNewGoalTitle(e.target.value)}
-                placeholder="Add a new goal..."
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-              <button
-                type="submit"
-                className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-lg"
-              >
-                Add
-              </button>
+            {/* Time Block Calendar */}
+            <TimeBlockCalendar blocks={timeBlocks} />
+
+            {/* Goal Hierarchy */}
+            <GoalHierarchy
+              yearly={yearlyGoals}
+              monthly={monthlyGoals}
+              weekly={weeklyGoals}
+              onRefresh={fetchData}
+            />
+          </div>
+
+          {/* Right Column: Daily Goals & Quick Actions */}
+          <div className="space-y-6">
+            {/* Today's Goals */}
+            <div className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-xl font-bold text-gray-800 mb-4">Today's Goals (3)</h2>
+              {goalsLoading ? (
+                <p className="text-gray-600">Loading...</p>
+              ) : dailyGoals.length === 0 ? (
+                <p className="text-gray-600 text-sm">No goals set. Use the morning routine to set your 3 daily goals.</p>
+              ) : (
+                <div className="space-y-2">
+                  {dailyGoals.map((goal) => (
+                    <label key={goal.id} className="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={goal.completed}
+                        onChange={async (e) => {
+                          await api.goals.daily.update(goal.id, { completed: e.target.checked });
+                          fetchData();
+                        }}
+                        className="w-5 h-5 text-purple-600 rounded"
+                      />
+                      <span className={`ml-3 ${goal.completed ? 'line-through text-gray-400' : 'text-gray-800'}`}>
+                        {goal.title}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              )}
             </div>
-          </form>
 
-          {goalsLoading ? (
-            <p className="text-gray-600">Loading goals...</p>
-          ) : goals.length === 0 ? (
-            <p className="text-gray-600">No goals yet. Create one to get started!</p>
-          ) : (
-            <ul className="space-y-2">
-              {goals.map((goal) => (
-                <li
-                  key={goal.id}
-                  className="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100"
-                >
-                  <input
-                    type="checkbox"
-                    checked={goal.completed}
-                    className="w-5 h-5 text-purple-600 rounded"
-                    readOnly
-                  />
-                  <span
-                    className={`ml-3 ${
-                      goal.completed ? 'line-through text-gray-400' : 'text-gray-800'
-                    }`}
-                  >
-                    {goal.title}
-                  </span>
-                  <span className="ml-auto text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded">
-                    {goal.level}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
+            {/* Quick Actions */}
+            <QuickActions onAction={fetchData} />
+          </div>
         </div>
       </main>
     </div>
