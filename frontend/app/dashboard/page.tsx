@@ -45,12 +45,12 @@ export default function DashboardPage() {
         api.timeBlocks.list(),
       ]);
 
-      setBigGoal(big?.data || null);
-      setYearlyGoals(yearly.data || []);
-      setMonthlyGoals(monthly.data || []);
-      setWeeklyGoals(weekly.data || []);
-      setDailyGoals(daily.data || []);
-      setTimeBlocks(blocks.data || []);
+      setBigGoal((big?.data as {title: string; why?: string} | undefined) || null);
+      setYearlyGoals((yearly.data as {id: string; title: string}[] | undefined) || []);
+      setMonthlyGoals((monthly.data as {id: string; title: string}[] | undefined) || []);
+      setWeeklyGoals((weekly.data as {id: string; title: string}[] | undefined) || []);
+      setDailyGoals((daily.data as {id: string; title: string; completed: boolean}[] | undefined) || []);
+      setTimeBlocks((blocks.data as {id: string; name: string}[] | undefined) || []);
 
       const completed = (daily.data || []).filter((g: {completed: boolean}) => g.completed).length;
       setStats({

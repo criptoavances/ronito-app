@@ -28,12 +28,12 @@ export default function CalendarPage() {
       const startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
       const endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
 
-      const goals = {};
+      const goals: Record<string, Array<{id: string; title: string; completed: boolean}>> = {};
       for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
         const dateStr = d.toISOString().split('T')[0];
         const response = await api.goals.daily.list(dateStr);
         if (response.data) {
-          goals[dateStr] = response.data;
+          goals[dateStr] = (response.data as {id: string; title: string; completed: boolean}[]) || [];
         }
       }
       setDailyGoals(goals);
