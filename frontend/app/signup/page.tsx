@@ -29,7 +29,7 @@ export default function SignupPage() {
       });
 
       if (response.ok) {
-        router.push('/login');
+        router.push('/onboarding');
       } else {
         setError('Signup failed. Try again.');
       }
