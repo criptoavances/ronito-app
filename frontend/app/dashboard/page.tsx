@@ -12,13 +12,13 @@ import QuickActions from '../../components/dashboard/QuickActions';
 export default function DashboardPage() {
   const router = useRouter();
   const { user, loading, logout, isAuthenticated } = useAuth();
-  const [bigGoal, setBigGoal] = useState(null);
-  const [yearlyGoals, setYearlyGoals] = useState([]);
-  const [monthlyGoals, setMonthlyGoals] = useState([]);
-  const [weeklyGoals, setWeeklyGoals] = useState([]);
-  const [dailyGoals, setDailyGoals] = useState([]);
-  const [timeBlocks, setTimeBlocks] = useState([]);
-  const [stats, setStats] = useState({ total: 0, completed: 0, streak: 0 });
+  const [bigGoal, setBigGoal] = useState<{title: string; why?: string} | null>(null);
+  const [yearlyGoals, setYearlyGoals] = useState<Array<{id: string; title: string}>>([]);
+  const [monthlyGoals, setMonthlyGoals] = useState<Array<{id: string; title: string}>>([]);
+  const [weeklyGoals, setWeeklyGoals] = useState<Array<{id: string; title: string}>>([]);
+  const [dailyGoals, setDailyGoals] = useState<Array<{id: string; title: string; completed: boolean}>>([]);
+  const [timeBlocks, setTimeBlocks] = useState<Array<{id: string; name: string}>>([]);
+  const [stats, setStats] = useState<{total: number; completed: number; streak: number}>({ total: 0, completed: 0, streak: 0 });
   const [goalsLoading, setGoalsLoading] = useState(false);
 
   useEffect(() => {
@@ -52,7 +52,7 @@ export default function DashboardPage() {
       setDailyGoals(daily.data || []);
       setTimeBlocks(blocks.data || []);
 
-      const completed = (daily.data || []).filter((g) => g.completed).length;
+      const completed = (daily.data || []).filter((g: {completed: boolean}) => g.completed).length;
       setStats({
         total: (daily.data || []).length,
         completed,

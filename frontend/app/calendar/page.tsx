@@ -9,7 +9,7 @@ export default function CalendarPage() {
   const router = useRouter();
   const { isAuthenticated, loading } = useAuth();
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [dailyGoals, setDailyGoals] = useState({});
+  const [dailyGoals, setDailyGoals] = useState<Record<string, Array<{id: string; title: string; completed: boolean}>>>({});
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -60,7 +60,7 @@ export default function CalendarPage() {
     days.push(i);
   }
 
-  const goalsForDay = (day) => {
+  const goalsForDay = (day: number | null) => {
     if (!day) return [];
     const dateStr = new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
       .toISOString()
@@ -68,10 +68,10 @@ export default function CalendarPage() {
     return dailyGoals[dateStr] || [];
   };
 
-  const completionPercent = (day) => {
+  const completionPercent = (day: number | null) => {
     const goals = goalsForDay(day);
     if (goals.length === 0) return 0;
-    return (goals.filter((g) => g.completed).length / goals.length) * 100;
+    return (goals.filter((g: {completed: boolean}) => g.completed).length / goals.length) * 100;
   };
 
   return (
