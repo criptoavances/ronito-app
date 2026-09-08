@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_URL = 'https://ronito-app-production.up.railway.app';
 
 export interface ApiResponse<T> {
   data?: T;
