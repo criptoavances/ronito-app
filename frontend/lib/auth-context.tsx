@@ -48,7 +48,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (response.data && typeof response.data === 'object') {
       const data = response.data as any;
       localStorage.setItem('token', data.access_token || '');
-      setUser({ id: data.user_id, email: data.email } as User);
+      const userData = { id: data.user_id, email: data.email } as User;
+      setUser(userData);
+      return userData;
     } else {
       throw new Error(response.error || 'Login failed');
     }
