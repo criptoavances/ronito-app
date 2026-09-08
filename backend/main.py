@@ -30,7 +30,8 @@ frontend_origins = [
     "http://localhost:3000",
     "http://localhost:8080",
     "https://ronito.app",
-    "https://ronito-frontend.pages.dev"
+    "https://ronito-frontend.pages.dev",
+    "https://*.ronito-frontend.pages.dev"
 ]
 app.add_middleware(
     CORSMiddleware,
