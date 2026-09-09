@@ -48,7 +48,7 @@ export default function VoicePage() {
                   <span className="text-purple-600 font-semibold">"Set a goal"</span> to add tasks by voice
                 </li>
                 <li className="text-gray-700">
-                  <span className="text-purple-600 font-semibold">"Play meditation"</span> to start sessions
+                  <span className="text-purple-600 font-semibold">"Play health"</span> to start sessions
                 </li>
                 <li className="text-gray-700">
                   <span className="text-purple-600 font-semibold">Your WHY reminders</span> spoken aloud throughout the day

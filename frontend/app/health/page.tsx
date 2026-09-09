@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '../../lib/auth-context';
 import { api } from '../../lib/api';
 
-export default function MeditationPage() {
+export default function HealthPage() {
   const router = useRouter();
   const { isAuthenticated, loading } = useAuth();
   const [tab, setTab] = useState('library');
@@ -62,7 +62,7 @@ export default function MeditationPage() {
       {/* Header */}
       <header className="bg-white shadow sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-green-600">🧘 Meditation & Breathwork</h1>
+          <h1 className="text-3xl font-bold text-green-600">🧘 Health & Breathwork</h1>
           <button
             onClick={() => router.push('/dashboard')}
             className="px-4 py-2 text-gray-600 hover:text-gray-800"
@@ -156,7 +156,7 @@ export default function MeditationPage() {
         {/* Upload Tab */}
         {tab === 'add' && (
           <div className="bg-white rounded-lg shadow p-8 max-w-2xl">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Upload Meditation Session</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Upload Health Session</h2>
 
             <div className="space-y-4">
               <div>

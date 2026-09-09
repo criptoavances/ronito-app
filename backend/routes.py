@@ -318,14 +318,14 @@ async def update_settings(settings: UserSettingsRequest, user=Depends(get_curren
     return result.data[0] if result.data else None
 
 # Meditation Sessions endpoints
-@router.get("/api/meditation")
-async def list_meditation_sessions(user=Depends(get_current_user)):
-    result = supabase.table("meditation_sessions").select("*").eq("user_id", user.id).execute()
+@router.get("/api/health")
+async def list_health_sessions(user=Depends(get_current_user)):
+    result = supabase.table("health_sessions").select("*").eq("user_id", user.id).execute()
     return result.data
 
-@router.post("/api/meditation")
-async def create_meditation_session(session: MeditationSessionRequest, user=Depends(get_current_user)):
-    result = supabase.table("meditation_sessions").insert({
+@router.post("/api/health")
+async def create_health_session(session: MeditationSessionRequest, user=Depends(get_current_user)):
+    result = supabase.table("health_sessions").insert({
         "user_id": user.id,
         "title": session.title,
         "duration_minutes": session.duration_minutes,

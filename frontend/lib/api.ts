@@ -115,11 +115,11 @@ export const api = {
     update: (id: string, date: any) => apiCall(`/api/special-dates/${id}`, { method: 'PUT', body: JSON.stringify(date) }),
     delete: (id: string) => apiCall(`/api/special-dates/${id}`, { method: 'DELETE' }),
   },
-  meditation: {
-    list: () => apiCall('/api/meditation', { method: 'GET' }),
-    create: (session: any) => apiCall('/api/meditation', { method: 'POST', body: JSON.stringify(session) }),
-    delete: (id: string) => apiCall(`/api/meditation/${id}`, { method: 'DELETE' }),
-    library: () => apiCall('/api/meditation/library', { method: 'GET' }),
+  health: {
+    list: () => apiCall('/api/health', { method: 'GET' }),
+    create: (session: any) => apiCall('/api/health', { method: 'POST', body: JSON.stringify(session) }),
+    delete: (id: string) => apiCall(`/api/health/${id}`, { method: 'DELETE' }),
+    library: () => apiCall('/api/health/library', { method: 'GET' }),
   },
   settings: {
     get: () => apiCall('/api/settings', { method: 'GET' }),

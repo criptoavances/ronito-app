@@ -7,7 +7,7 @@ export default function QuickActions({ onAction }) {
     { label: 'Morning Routine', icon: '🌅', href: '/morning', color: 'bg-blue-600' },
     { label: 'Evening Routine', icon: '🌙', href: '/evening', color: 'bg-indigo-600' },
     { label: 'Capture Idea', icon: '💡', href: '/ideas', color: 'bg-yellow-600' },
-    { label: 'Meditate', icon: '🧘', href: '/meditation', color: 'bg-green-600' },
+    { label: 'Meditate', icon: '🧘', href: '/health', color: 'bg-green-600' },
   ];
 
   return (
