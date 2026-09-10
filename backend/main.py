@@ -8,7 +8,7 @@ load_dotenv()
 load_dotenv('.env.production')
 
 from app.config import settings
-from app.routes import auth, goals, voice, health, time_blocks, gratitude, reflections, ideas, special_dates
+from app.routes import auth, goals, voice, health, time_blocks, gratitude, reflections, ideas, special_dates, email_verification
 from app.routes import settings as settings_routes
 
 # Startup & shutdown
@@ -53,6 +53,7 @@ async def root():
 
 # Routes
 app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
+app.include_router(email_verification.router, prefix="/api/email", tags=["Email Verification"])
 app.include_router(goals.router, prefix="/api/goals", tags=["Goals"])
 app.include_router(voice.router, prefix="/api/voice", tags=["Voice"])
 app.include_router(time_blocks.router, prefix="/api/time-blocks", tags=["Time Blocks"])
