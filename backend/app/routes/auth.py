@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, Header
 from pydantic import BaseModel
 from typing import Optional
 from app.db import get_supabase
+import httpx
 
 router = APIRouter()
 
@@ -41,6 +42,19 @@ async def signup(request: SignUpRequest):
                 "email": request.email,
                 "email_verified": False
             }).execute()
+
+            # Enroll in email marketing sequence
+            try:
+                supabase.table("email_sequences").insert({
+                    "user_id": user_id,
+                    "email": request.email,
+                    "sequence_name": "welcome",
+                    "status": "active",
+                    "current_email_index": 0
+                }).execute()
+            except Exception as e:
+                print(f"Failed to enroll in email sequence: {e}")
+
             return {
                 "user_id": user_id,
                 "email": result.user.email,
@@ -59,8 +73,17 @@ async def signup(request: SignUpRequest):
                 "email": request.email,
                 "email_verified": False
             }).execute()
+
+            # Enroll in email marketing sequence
+            supabase.table("email_sequences").insert({
+                "user_id": mock_token,
+                "email": request.email,
+                "sequence_name": "welcome",
+                "status": "active",
+                "current_email_index": 0
+            }).execute()
         except:
-            pass  # User table insert failed, continue anyway
+            pass  # User table or sequence insert failed, continue anyway
         return {
             "user_id": mock_token,
             "email": request.email,
