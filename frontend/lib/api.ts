@@ -1,4 +1,6 @@
-const API_URL = 'https://ronito-app-production.up.railway.app';
+const API_URL = process.env.NODE_ENV === 'production'
+  ? 'https://ronito-app-production.up.railway.app'
+  : 'http://localhost:8000';
 
 export interface ApiResponse<T> {
   data?: T;

@@ -52,6 +52,8 @@ export default function OnboardingPage() {
   const handleBack = () => {
     if (step > 1) {
       setStep(step - 1);
+    } else {
+      router.push('/dashboard');
     }
   };
 
@@ -149,10 +151,9 @@ export default function OnboardingPage() {
         <div className="flex justify-between items-center mt-8">
           <button
             onClick={handleBack}
-            disabled={step === 1}
-            className="px-6 py-2 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-2 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50"
           >
-            Back
+            ← Back
           </button>
 
           <div className="flex gap-4">

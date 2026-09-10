@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { api } from '@/lib/api';
 
 export default function SignupPage() {
   const router = useRouter();
@@ -22,16 +23,13 @@ export default function SignupPage() {
 
     setLoading(true);
     try {
-      const response = await fetch('https://ronito-app-production.up.railway.app/api/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await api.auth.signup(email, password);
 
-      if (response.ok) {
+      if (response.data) {
+        localStorage.setItem('token', response.data.access_token);
         router.push('/onboarding');
       } else {
-        setError('Signup failed. Try again.');
+        setError(response.error || 'Signup failed. Try again.');
       }
     } catch (err) {
       setError('Network error');
@@ -44,6 +42,12 @@ export default function SignupPage() {
     <div className="min-h-screen bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
         <div className="text-center mb-8">
+          <button
+            onClick={() => router.push('/login')}
+            className="text-gray-600 hover:text-gray-800 text-sm mb-4 flex items-center gap-1"
+          >
+            ← Back to Login
+          </button>
           <h1 className="text-4xl font-bold text-gray-800">RONITO</h1>
           <p className="text-gray-600 mt-2">Create Your Account</p>
         </div>

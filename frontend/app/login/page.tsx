@@ -35,6 +35,12 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
         <div className="text-center mb-8">
+          <button
+            onClick={() => window.history.back()}
+            className="text-gray-600 hover:text-gray-800 text-sm mb-4"
+          >
+            ← Back
+          </button>
           <h1 className="text-4xl font-bold text-gray-800">RONITO</h1>
           <p className="text-gray-600 mt-2">Your AI Life Manager</p>
         </div>
