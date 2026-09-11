@@ -95,7 +95,13 @@ export default function DashboardPage() {
               onClick={() => router.push('/morning')}
               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg"
             >
-              Morning
+              🌅 Morning
+            </button>
+            <button
+              onClick={() => router.push('/evening')}
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg"
+            >
+              🌙 Evening
             </button>
             <button
               onClick={logout}

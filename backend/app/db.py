@@ -1,7 +1,19 @@
 import os
 from supabase import create_client, Client
+import psycopg2
+from psycopg2.extras import RealDictCursor
 
 _supabase_client: Client = None
+_db_conn = None
+
+def get_db_connection():
+    global _db_conn
+    if _db_conn is None:
+        db_url = os.getenv("DATABASE_URL", "")
+        if db_url:
+            db_url = db_url.replace("postgres://", "postgresql://")
+            _db_conn = psycopg2.connect(db_url)
+    return _db_conn
 
 def get_supabase() -> Client:
     global _supabase_client
