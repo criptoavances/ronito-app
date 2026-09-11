@@ -7,17 +7,9 @@ import { api } from '../../lib/api';
 
 export default function EveningPage() {
   const router = useRouter();
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, user } = useAuth();
   const [step, setStep] = useState(1);
-  const [reflection, setReflection] = useState({
-    what_done: '',
-    what_didnt: '',
-    why_didnt: '',
-    three_good_things: ['', '', ''],
-    day_rating: 5,
-    journal_entry: '',
-    tomorrow_preview: '',
-  });
+  const [amazingThings, setAmazingThings] = useState(['', '', '']);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -26,14 +18,20 @@ export default function EveningPage() {
     }
   }, [loading, isAuthenticated, router]);
 
+  const handleAmazingThingChange = (index: number, value: string) => {
+    const newThings = [...amazingThings];
+    newThings[index] = value;
+    setAmazingThings(newThings);
+  };
+
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
       const today = new Date().toISOString().split('T')[0];
 
-      await api.reflections.create({
-        ...reflection,
+      await api.gratitude.create({
         entry_date: today,
+        gratitude_items: amazingThings.filter((t) => t.trim()),
       });
 
       router.push('/dashboard');
@@ -51,97 +49,57 @@ export default function EveningPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-600 to-purple-700">
-      {/* Header */}
       <header className="text-white py-8">
         <div className="max-w-2xl mx-auto px-4 text-center">
           <h1 className="text-5xl font-bold mb-2">Good Evening 🌙</h1>
-          <p className="text-lg opacity-90">Reflect on your day</p>
+          <p className="text-lg opacity-90">Remember 3 amazing things before sleep</p>
         </div>
       </header>
 
       <main className="max-w-2xl mx-auto px-4 pb-8">
-        {/* Step 1: Day Summary */}
+        {/* Step 1: Greeting */}
         {step === 1 && (
-          <div className="bg-white rounded-lg shadow-lg p-8 mb-4">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">How was your day?</h2>
-
-            <div className="space-y-4 mb-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  What did you accomplish?
-                </label>
-                <textarea
-                  value={reflection.what_done}
-                  onChange={(e) =>
-                    setReflection({ ...reflection, what_done: e.target.value })
-                  }
-                  placeholder="The wins, big and small..."
-                  rows={3}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  What didn't get done?
-                </label>
-                <textarea
-                  value={reflection.what_didnt}
-                  onChange={(e) =>
-                    setReflection({ ...reflection, what_didnt: e.target.value })
-                  }
-                  placeholder="No judgment. What fell off the list?"
-                  rows={2}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Why didn't it happen?
-                </label>
-                <textarea
-                  value={reflection.why_didnt}
-                  onChange={(e) =>
-                    setReflection({ ...reflection, why_didnt: e.target.value })
-                  }
-                  placeholder="Be honest. What got in the way?"
-                  rows={2}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-              </div>
-            </div>
-
+          <div className="bg-white rounded-lg shadow-lg p-8 mb-4 text-center">
+            <h2 className="text-3xl font-bold text-gray-800 mb-4">Welcome back, {user?.name || 'friend'}</h2>
+            <p className="text-gray-600 mb-8 text-lg">
+              Before you sleep, let's remember the amazing moments from today. This will help you sleep happy. 💫
+            </p>
             <button
               onClick={() => setStep(2)}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg"
+              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg text-lg"
             >
-              Next →
+              Let's Begin →
             </button>
           </div>
         )}
 
-        {/* Step 2: Gratitude */}
+        {/* Step 2: Three Amazing Things */}
         {step === 2 && (
           <div className="bg-white rounded-lg shadow-lg p-8 mb-4">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">3 Good Things</h2>
-            <p className="text-gray-600 mb-4">What went well today? Find the good.</p>
+            <h2 className="text-3xl font-bold text-gray-800 mb-2">3 Amazing Things</h2>
+            <p className="text-gray-600 mb-8">What happened today that made you smile or feel good?</p>
 
-            <div className="space-y-4 mb-6">
-              {reflection.three_good_things.map((thing, idx) => (
-                <input
-                  key={idx}
-                  type="text"
-                  value={thing}
-                  onChange={(e) => {
-                    const newThings = [...reflection.three_good_things];
-                    newThings[idx] = e.target.value;
-                    setReflection({ ...reflection, three_good_things: newThings });
-                  }}
-                  placeholder={`Good thing ${idx + 1}`}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
+            <div className="space-y-4 mb-8">
+              {[0, 1, 2].map((idx) => (
+                <div key={idx}>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Amazing thing #{idx + 1} ⭐
+                  </label>
+                  <textarea
+                    value={amazingThings[idx]}
+                    onChange={(e) => handleAmazingThingChange(idx, e.target.value)}
+                    placeholder={`Something wonderful that happened today...`}
+                    rows={2}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
               ))}
+            </div>
+
+            <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4 mb-8">
+              <p className="text-sm text-indigo-800">
+                ✨ These good thoughts will help you sleep peacefully. Your brain will rest on these happy memories.
+              </p>
             </div>
 
             <div className="flex gap-4">
@@ -152,110 +110,24 @@ export default function EveningPage() {
                 Back
               </button>
               <button
-                onClick={() => setStep(3)}
-                className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg"
-              >
-                Next →
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Step 3: Rating */}
-        {step === 3 && (
-          <div className="bg-white rounded-lg shadow-lg p-8 mb-4">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Rate Your Day</h2>
-            <p className="text-gray-600 mb-6">1 (rough) to 10 (amazing)</p>
-
-            <div className="mb-6">
-              <div className="flex justify-between items-end gap-2">
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
-                  <button
-                    key={num}
-                    onClick={() => setReflection({ ...reflection, day_rating: num })}
-                    className={`flex-1 py-4 rounded-lg font-bold transition ${
-                      reflection.day_rating === num
-                        ? 'bg-indigo-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    {num}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex gap-4">
-              <button
-                onClick={() => setStep(2)}
-                className="flex-1 border border-gray-300 text-gray-700 font-bold py-3 rounded-lg hover:bg-gray-50"
-              >
-                Back
-              </button>
-              <button
-                onClick={() => setStep(4)}
-                className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg"
-              >
-                Next →
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Step 4: Journal & Tomorrow */}
-        {step === 4 && (
-          <div className="bg-white rounded-lg shadow-lg p-8 mb-4">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Reflect & Plan Tomorrow</h2>
-
-            <div className="space-y-4 mb-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Journal Entry
-                </label>
-                <textarea
-                  value={reflection.journal_entry}
-                  onChange={(e) =>
-                    setReflection({ ...reflection, journal_entry: e.target.value })
-                  }
-                  placeholder="Free-form thoughts. Anything on your mind?"
-                  rows={4}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Tomorrow's Preview
-                </label>
-                <textarea
-                  value={reflection.tomorrow_preview}
-                  onChange={(e) =>
-                    setReflection({ ...reflection, tomorrow_preview: e.target.value })
-                  }
-                  placeholder="What's on the agenda? One thing you're looking forward to?"
-                  rows={2}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-              </div>
-            </div>
-
-            <div className="flex gap-4">
-              <button
-                onClick={() => setStep(3)}
-                className="flex-1 border border-gray-300 text-gray-700 font-bold py-3 rounded-lg hover:bg-gray-50"
-              >
-                Back
-              </button>
-              <button
                 onClick={handleSubmit}
-                disabled={isSubmitting}
-                className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg disabled:opacity-50"
+                disabled={isSubmitting || amazingThings.every((t) => !t.trim())}
+                className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-bold py-3 rounded-lg"
               >
-                {isSubmitting ? 'Saving...' : 'Sleep Well →'}
+                {isSubmitting ? 'Saving...' : 'Sleep Well 😴'}
               </button>
             </div>
           </div>
         )}
+
+        <div className="mt-6 text-center">
+          <button
+            onClick={() => router.push('/dashboard')}
+            className="text-white hover:underline text-sm"
+          >
+            Skip to Dashboard
+          </button>
+        </div>
       </main>
     </div>
   );
