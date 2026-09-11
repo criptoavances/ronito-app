@@ -5,14 +5,20 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '../../lib/auth-context';
 import { api } from '../../lib/api';
 
+type RoutineComponent = 'greeting' | 'why' | 'gratitude' | 'goals' | 'motivation';
+
 export default function MorningPage() {
   const router = useRouter();
   const { isAuthenticated, loading } = useAuth();
-  const [step, setStep] = useState(1);
-  const [bigGoal, setBigGoal] = useState(null);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [bigGoal, setBigGoal] = useState<any>(null);
   const [gratitudeThings, setGratitudeThings] = useState(['', '', '']);
   const [dailyGoals, setDailyGoals] = useState(['', '', '']);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Default routine: all components enabled
+  const routineComponents: RoutineComponent[] = ['greeting', 'why', 'gratitude', 'goals', 'motivation'];
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -22,29 +28,42 @@ export default function MorningPage() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      fetchBigGoal();
+      fetchData();
     }
   }, [isAuthenticated]);
 
-  const fetchBigGoal = async () => {
+  const fetchData = async () => {
     try {
+      setIsLoading(true);
       const response = await api.goals.big.get();
       setBigGoal(response.data || null);
     } catch (error) {
-      console.error('Failed to fetch big goal:', error);
+      console.error('Failed to fetch data:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleSubmit = async () => {
+  const handleNextStep = () => {
+    if (currentStep < routineComponents.length - 1) {
+      setCurrentStep(currentStep + 1);
+    } else {
+      handleRoutineComplete();
+    }
+  };
+
+  const handleRoutineComplete = async () => {
     setIsSubmitting(true);
     try {
       const today = new Date().toISOString().split('T')[0];
 
       // Save gratitude
-      await api.gratitude.create({
-        things: gratitudeThings.filter((t) => t),
-        entry_date: today,
-      });
+      if (gratitudeThings.some((t) => t)) {
+        await api.gratitude.create({
+          entry_date: today,
+          gratitude_items: gratitudeThings.filter((t) => t),
+        });
+      }
 
       // Save daily goals
       for (const goal of dailyGoals.filter((g) => g)) {
