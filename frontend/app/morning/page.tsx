@@ -4,12 +4,17 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../lib/auth-context';
 import { api } from '../../lib/api';
+import MorningGreeting from '../../components/morning/MorningGreeting';
+import MorningWhyReminder from '../../components/morning/MorningWhyReminder';
+import MorningGratitude from '../../components/morning/MorningGratitude';
+import MorningGoalSetter from '../../components/morning/MorningGoalSetter';
+import MorningMotivation from '../../components/morning/MorningMotivation';
 
 type RoutineComponent = 'greeting' | 'why' | 'gratitude' | 'goals' | 'motivation';
 
 export default function MorningPage() {
   const router = useRouter();
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, user } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
   const [bigGoal, setBigGoal] = useState<any>(null);
   const [gratitudeThings, setGratitudeThings] = useState(['', '', '']);
@@ -17,7 +22,6 @@ export default function MorningPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Default routine: all components enabled
   const routineComponents: RoutineComponent[] = ['greeting', 'why', 'gratitude', 'goals', 'motivation'];
 
   useEffect(() => {
@@ -47,8 +51,12 @@ export default function MorningPage() {
   const handleNextStep = () => {
     if (currentStep < routineComponents.length - 1) {
       setCurrentStep(currentStep + 1);
-    } else {
-      handleRoutineComplete();
+    }
+  };
+
+  const handlePrevStep = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
     }
   };
 
@@ -57,7 +65,6 @@ export default function MorningPage() {
     try {
       const today = new Date().toISOString().split('T')[0];
 
-      // Save gratitude
       if (gratitudeThings.some((t) => t)) {
         await api.gratitude.create({
           entry_date: today,
@@ -65,7 +72,6 @@ export default function MorningPage() {
         });
       }
 
-      // Save daily goals
       for (const goal of dailyGoals.filter((g) => g)) {
         await api.goals.daily.create({
           title: goal,
@@ -88,7 +94,6 @@ export default function MorningPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-400 to-purple-500">
-      {/* Header */}
       <header className="text-white py-8">
         <div className="max-w-2xl mx-auto px-4 text-center">
           <h1 className="text-5xl font-bold mb-2">Good Morning 🌅</h1>
@@ -97,120 +102,53 @@ export default function MorningPage() {
       </header>
 
       <main className="max-w-2xl mx-auto px-4 pb-8">
-        {/* Step 1: Big Goal */}
-        {step === 1 && (
-          <div className="bg-white rounded-lg shadow-lg p-8 mb-4">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Your Why Today</h2>
-            {bigGoal ? (
-              <div className="space-y-4">
-                <div className="p-4 bg-purple-50 rounded-lg border-l-4 border-purple-600">
-                  <p className="font-semibold text-gray-800">{bigGoal.title}</p>
-                  {bigGoal.why && <p className="text-gray-600 mt-2 italic">{bigGoal.why}</p>}
-                </div>
-                <p className="text-gray-600 text-center">
-                  This is your north star. Keep this in mind as you plan your day.
-                </p>
-              </div>
-            ) : (
-              <p className="text-gray-600">Set your big goal in onboarding to see it here.</p>
-            )}
-            <button
-              onClick={() => setStep(2)}
-              className="mt-6 w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-lg"
-            >
-              Next →
-            </button>
-          </div>
+        <div className="mb-4 text-white text-center text-sm">
+          Step {currentStep + 1} of {routineComponents.length}
+        </div>
+
+        <div className="w-full bg-white/20 rounded-full h-2 mb-6">
+          <div
+            className="bg-white h-2 rounded-full transition-all duration-300"
+            style={{ width: `${((currentStep + 1) / routineComponents.length) * 100}%` }}
+          ></div>
+        </div>
+
+        {currentStep === 0 && <MorningGreeting onNext={handleNextStep} userName={user?.name || user?.email} />}
+
+        {currentStep === 1 && (
+          <MorningWhyReminder bigGoal={bigGoal} onNext={handleNextStep} onBack={handlePrevStep} />
         )}
 
-        {/* Step 2: Gratitude */}
-        {step === 2 && (
-          <div className="bg-white rounded-lg shadow-lg p-8 mb-4">
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">What are you grateful for?</h2>
-            <p className="text-gray-600 mb-6">Share 3 things, big or small.</p>
-
-            <div className="space-y-4 mb-6">
-              {gratitudeThings.map((thing, idx) => (
-                <div key={idx}>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Thing {idx + 1}
-                  </label>
-                  <input
-                    type="text"
-                    value={thing}
-                    onChange={(e) => {
-                      const newThings = [...gratitudeThings];
-                      newThings[idx] = e.target.value;
-                      setGratitudeThings(newThings);
-                    }}
-                    placeholder={`e.g., ${idx === 0 ? 'My family' : idx === 1 ? 'Good health' : 'This sunny day'}`}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              ))}
-            </div>
-
-            <div className="flex gap-4">
-              <button
-                onClick={() => setStep(1)}
-                className="flex-1 border border-gray-300 text-gray-700 font-bold py-3 rounded-lg hover:bg-gray-50"
-              >
-                Back
-              </button>
-              <button
-                onClick={() => setStep(3)}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg"
-              >
-                Next →
-              </button>
-            </div>
-          </div>
+        {currentStep === 2 && (
+          <MorningGratitude
+            value={gratitudeThings}
+            onChange={setGratitudeThings}
+            onNext={handleNextStep}
+            onBack={handlePrevStep}
+          />
         )}
 
-        {/* Step 3: Daily Goals */}
-        {step === 3 && (
-          <div className="bg-white rounded-lg shadow-lg p-8 mb-4">
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">Pick 3 Goals for Today</h2>
-            <p className="text-gray-600 mb-6">Non-negotiable. Focus on these.</p>
-
-            <div className="space-y-4 mb-6">
-              {dailyGoals.map((goal, idx) => (
-                <div key={idx}>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Goal {idx + 1}
-                  </label>
-                  <input
-                    type="text"
-                    value={goal}
-                    onChange={(e) => {
-                      const newGoals = [...dailyGoals];
-                      newGoals[idx] = e.target.value;
-                      setDailyGoals(newGoals);
-                    }}
-                    placeholder={`e.g., ${idx === 0 ? 'Finish project X' : idx === 1 ? 'Exercise 30min' : 'Read 20 pages'}`}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              ))}
-            </div>
-
-            <div className="flex gap-4">
-              <button
-                onClick={() => setStep(2)}
-                className="flex-1 border border-gray-300 text-gray-700 font-bold py-3 rounded-lg hover:bg-gray-50"
-              >
-                Back
-              </button>
-              <button
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-                className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg disabled:opacity-50"
-              >
-                {isSubmitting ? 'Saving...' : 'Start Your Day →'}
-              </button>
-            </div>
-          </div>
+        {currentStep === 3 && (
+          <MorningGoalSetter
+            value={dailyGoals}
+            onChange={setDailyGoals}
+            onNext={handleNextStep}
+            onBack={handlePrevStep}
+          />
         )}
+
+        {currentStep === 4 && (
+          <MorningMotivation onStart={handleRoutineComplete} onBack={handlePrevStep} />
+        )}
+
+        <div className="mt-6 text-center">
+          <button
+            onClick={() => router.push('/dashboard')}
+            className="text-white hover:underline text-sm"
+          >
+            Skip to Dashboard
+          </button>
+        </div>
       </main>
     </div>
   );
