@@ -8,7 +8,7 @@ load_dotenv()
 load_dotenv('.env.production')
 
 from app.config import settings
-from app.routes import auth, goals, voice, health, time_blocks, gratitude, reflections, ideas, special_dates, email_verification, email_marketing
+from app.routes import auth, goals, voice, health, time_blocks, gratitude, reflections, ideas, special_dates, email_verification, email_marketing, chat
 from app.routes import settings as settings_routes
 
 # Startup & shutdown
@@ -64,6 +64,7 @@ app.include_router(ideas.router, prefix="/api/ideas", tags=["Ideas"])
 app.include_router(health.router, prefix="/api/health", tags=["Health"])
 app.include_router(special_dates.router, prefix="/api/special-dates", tags=["Special Dates"])
 app.include_router(settings_routes.router, prefix="/api/settings", tags=["Settings"])
+app.include_router(chat.router, tags=["Chat"])
 
 if __name__ == "__main__":
     import uvicorn

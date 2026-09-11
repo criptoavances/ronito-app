@@ -127,4 +127,9 @@ export const api = {
     get: () => apiCall('/api/settings', { method: 'GET' }),
     update: (settings: any) => apiCall('/api/settings', { method: 'PUT', body: JSON.stringify(settings) }),
   },
+  chat: {
+    send: (message: string) => apiCall('/api/chat', { method: 'POST', body: JSON.stringify({ message }) }),
+    getMotivation: () => apiCall('/api/chat/motivation', { method: 'GET' }),
+    getNextAction: () => apiCall('/api/chat/next-action', { method: 'GET' }),
+  },
 };

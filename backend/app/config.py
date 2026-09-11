@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     # AI Services
     WHISPER_MODEL: str = "base"
     PIPER_VOICE: str = "en_US-amy-medium"
+    ALIBABA_QWEN_API_KEY: Optional[str] = None
 
     # Google OAuth
     GOOGLE_CLIENT_ID: Optional[str] = None

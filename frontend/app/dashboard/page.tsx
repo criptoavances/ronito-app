@@ -8,6 +8,7 @@ import GoalHierarchy from '../../components/dashboard/GoalHierarchy';
 import TimeBlockCalendar from '../../components/dashboard/TimeBlockCalendar';
 import DailyStats from '../../components/dashboard/DailyStats';
 import QuickActions from '../../components/dashboard/QuickActions';
+import ChatWidget from '../../components/ChatWidget';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -75,6 +76,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50">
+      <ChatWidget />
       {/* Header */}
       <header className="bg-white shadow sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex justify-between items-center">
@@ -83,6 +85,12 @@ export default function DashboardPage() {
             <p className="text-gray-600 text-sm">Welcome, {user?.name || user?.email}</p>
           </div>
           <div className="flex gap-4">
+            <button
+              onClick={() => router.push('/chat')}
+              className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg"
+            >
+              💬 Chat
+            </button>
             <button
               onClick={() => router.push('/morning')}
               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg"
