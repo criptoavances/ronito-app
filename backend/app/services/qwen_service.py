@@ -9,7 +9,7 @@ class QwenService:
 
     def __init__(self):
         self.api_key = settings.ALIBABA_QWEN_API_KEY
-        self.base_url = "https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation"
+        self.base_url = "https://ws-w8k4zh0uucrx94g5.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1/chat/completions"
         self.model = "qwen-turbo"
 
     async def chat(self, message: str, user_context: Optional[Dict] = None) -> str:
@@ -22,23 +22,18 @@ class QwenService:
 
         payload = {
             "model": self.model,
-            "input": {
-                "messages": [
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": message}
-                ]
-            },
-            "parameters": {
-                "temperature": 0.7,
-                "top_p": 0.9,
-                "max_tokens": 500
-            }
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": message}
+            ],
+            "temperature": 0.7,
+            "top_p": 0.9,
+            "max_tokens": 500
         }
 
         headers = {
             "Authorization": f"Bearer {self.api_key}",
-            "Content-Type": "application/json",
-            "X-DashScope-SSE": "enable"
+            "Content-Type": "application/json"
         }
 
         try:
@@ -51,8 +46,8 @@ class QwenService:
                 response.raise_for_status()
                 result = response.json()
 
-                if result.get("output") and result["output"].get("choices"):
-                    return result["output"]["choices"][0]["message"]["content"]
+                if result.get("choices") and len(result["choices"]) > 0:
+                    return result["choices"][0]["message"]["content"]
                 else:
                     return "No response from Qwen"
         except httpx.RequestError as e:
