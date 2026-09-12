@@ -232,14 +232,11 @@
     <h1 data-i18n="hero_h1">Life got loud. Ronito keeps you on track — <em>and reminds you why.</em></h1>
     <p class="sub" data-i18n="hero_sub">Your AI life companion that talks with you every morning, guards your day, and never lets you forget what you're really working for.</p>
     <div class="waitlist">
-      <form class="waitlist-form" novalidate>
-        <input type="email" required data-i18n-placeholder="email_ph" placeholder="Your email">
-        <button type="submit" data-i18n="cta">Join the waitlist</button>
-      </form>
-      <p class="note" data-i18n="note">Free early access at launch. No spam — ever.</p>
-      <p class="group-note" data-i18n="group_note">Also join our exclusive WhatsApp discussion group — limited to 50 early believers.</p>
-      <a href="https://chat.whatsapp.com/EqdrSICsT2PBAcx8UhRqD4?mode=gi_t" target="_blank" rel="noopener noreferrer" class="btn-whatsapp-hero" data-i18n="cta_whatsapp">Join group</a>
-      <p class="success" data-i18n="success">You're on the list! Talk soon. 💜</p>
+      <div class="cta-buttons">
+        <a href="https://ronito-frontend.pages.dev/login" class="btn-primary" data-i18n="login">Login</a>
+        <a href="https://ronito-frontend.pages.dev/signup" class="btn-primary" data-i18n="signup" style="background: linear-gradient(90deg, var(--gold), var(--gold-deep));">Register</a>
+      </div>
+      <p class="note" data-i18n="note">Start free. No credit card required.</p>
     </div>
     <img src="RONITO LP 1.png" alt="Peace of mind with Ronito" class="hero-image">
   </section>
@@ -330,11 +327,12 @@
       hero_h1: 'Life got loud. Ronito keeps you on track — <em>and reminds you why.</em>',
       hero_sub: "Your AI life companion that talks with you every morning, guards your day, and never lets you forget what you're really working for.",
       email_ph: "Your email",
-      cta: "Join the waitlist",
-      note: "Free early access at launch. No spam — ever.",
-      group_note: "Also join our exclusive WhatsApp discussion group — limited to 50 early believers.",
+      login: "Login",
+      signup: "Register",
+      note: "Start free. No credit card required.",
+      group_note: "Also join our exclusive WhatsApp discussion group to connect with early believers.",
       cta_whatsapp: "Join group",
-      success: "You're on the list! Talk soon. 💜",
+      success: "Welcome! Let's begin.",
       pain: "You already have a to-do app. A calendar. A meditation app. A journal you abandoned in January. None of them talk to each other — <strong>and none of them know you.</strong>",
       moments_h2: “What a day with Ronito feels like”,
       m1_h: “Wake up with purpose”,
@@ -362,8 +360,8 @@
       f_p1: "I'm Ronny. I'm not a tech company — I'm a dad.",
       f_p2: “I built Ronito to become the person I want to be for my son, Ronny. Ronito means “little Ronny.” It's the calm, focused version of me — and now it can be that for you.”,
       f_p3: "— Ronny, founder",
-      cta2_h2: "Be first when Ronito launches",
-      langs: "Launching in English, Español and Deutsch.",
+      cta2_h2: "Your life OS is ready. Start now.",
+      langs: "Available in English, Español and Deutsch.",
       privacy: "Your journal stays yours. Private, encrypted, never used to train AI.",
       contact: "Contact"
     },
@@ -371,11 +369,12 @@
       hero_h1: "La vida se volvió ruidosa. Ronito te mantiene en el rumbo — <em>y te recuerda por qué.</em>",
       hero_sub: "Tu compañero de vida con IA que habla contigo cada mañana, cuida tu día y nunca deja que olvides para qué estás trabajando de verdad.",
       email_ph: "Tu correo",
-      cta: "Unirme a la lista",
-      note: "Acceso anticipado gratis en el lanzamiento. Sin spam, nunca.",
-      group_note: "También únete a nuestro grupo exclusivo de WhatsApp — limitado a 50 creyentes pioneros.",
+      login: "Iniciar sesión",
+      signup: "Registrarse",
+      note: "Empieza gratis. Sin tarjeta de crédito requerida.",
+      group_note: "Únete a nuestro grupo exclusivo de WhatsApp para conectar con creyentes pioneros.",
       cta_whatsapp: "Unirme al grupo",
-      success: "¡Estás en la lista! Hablamos pronto. 💜",
+      success: "¡Bienvenido! Empecemos.",
       pain: "Ya tienes una app de tareas. Un calendario. Una app de meditación. Un diario que abandonaste en enero. Ninguna se conecta con las demás — <strong>y ninguna te conoce a ti.</strong>",
       moments_h2: “Así se siente un día con Ronito”,
       m1_h: “Despierta con propósito”,
@@ -403,7 +402,7 @@
       f_p1: "Soy Ronny. No soy una empresa de tecnología — soy papá.",
       f_p2: “Construí Ronito para ser la persona que quiero ser para mi hijo, Ronny. Ronito significa “pequeño Ronny”. Es la versión tranquila y enfocada de mí — y ahora puede serlo para ti.”,
       f_p3: "— Ronny, fundador",
-      cta2_h2: "Sé el primero cuando Ronito llegue",
+      cta2_h2: "Tu sistema de vida está listo. Empieza ahora.",
       langs: "Disponible en English, Español y Deutsch.",
       privacy: "Tu diario es tuyo. Privado, cifrado, nunca usado para entrenar IA.",
       contact: "Contacto"
@@ -412,11 +411,12 @@
       hero_h1: "Das Leben ist laut geworden. Ronito hält dich auf Kurs — <em>und erinnert dich an dein Warum.</em>",
       hero_sub: "Dein KI-Lebensbegleiter, der jeden Morgen mit dir spricht, deinen Tag schützt und dich nie vergessen lässt, wofür du wirklich arbeitest.",
       email_ph: "Deine E-Mail",
-      cta: "Auf die Warteliste",
-      note: "Kostenloser Frühzugang zum Start. Kein Spam — versprochen.",
-      group_note: "Tritt auch unserer exklusiven WhatsApp-Diskussionsgruppe bei — begrenzt auf 50 frühe Gläubige.",
+      login: "Anmelden",
+      signup: "Registrieren",
+      note: "Kostenlos starten. Keine Kreditkarte erforderlich.",
+      group_note: "Tritt unserer exklusiven WhatsApp-Gruppe bei, um mit frühen Gläubigen in Kontakt zu treten.",
       cta_whatsapp: "Gruppe beitreten",
-      success: "Du bist auf der Liste! Bis bald. 💜",
+      success: "Willkommen! Lass uns beginnen.",
       pain: "Du hast schon eine To-do-App. Einen Kalender. Eine Meditations-App. Ein Tagebuch, das du im Januar aufgegeben hast. Keine davon kennt die anderen — <strong>und keine kennt dich.</strong>",
       moments_h2: “So fühlt sich ein Tag mit Ronito an”,
       m1_h: “Wach mit Absicht auf”,
@@ -444,7 +444,7 @@
       f_p1: "Ich bin Ronny. Ich bin kein Tech-Konzern — ich bin Papa.",
       f_p2: “Ich habe Ronito gebaut, um der Mensch zu werden, der ich für meinen Sohn Ronny sein will. Ronito heißt „kleiner Ronny”. Es ist die ruhige, fokussierte Version von mir — und jetzt kann es das auch für dich sein.”,
       f_p3: "— Ronny, Gründer",
-      cta2_h2: "Sei dabei, wenn Ronito startet",
+      cta2_h2: "Dein Lebens-OS ist bereit. Starten Sie jetzt.",
       langs: "Verfügbar auf English, Español und Deutsch.",
       privacy: "Dein Tagebuch gehört dir. Privat, verschlüsselt, niemals für KI-Training verwendet.",
       contact: "Kontakt"
