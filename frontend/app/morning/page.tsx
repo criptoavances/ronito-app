@@ -68,7 +68,7 @@ export default function MorningPage() {
       if (gratitudeThings.some((t) => t)) {
         await api.gratitude.create({
           entry_date: today,
-          gratitude_items: gratitudeThings.filter((t) => t),
+          things: gratitudeThings.filter((t) => t),
         });
       }
 

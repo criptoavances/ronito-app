@@ -127,7 +127,7 @@ async def create_weekly_goal(goal: WeeklyGoalRequest, token: str = Depends(get_u
             "user_id": token,
             "monthly_goal_id": goal.monthly_goal_id,
             "title": goal.title,
-            "week_start": goal.week_start
+            "week_start": goal.week_start.isoformat() if isinstance(goal.week_start, date) else goal.week_start
         }).execute()
         return result.data[0] if result.data else {}
     except Exception as e:
@@ -151,7 +151,7 @@ async def create_daily_goal(goal: DailyGoalRequest, token: str = Depends(get_use
             "user_id": token,
             "weekly_goal_id": goal.weekly_goal_id,
             "title": goal.title,
-            "goal_date": goal.goal_date
+            "goal_date": goal.goal_date.isoformat() if isinstance(goal.goal_date, date) else goal.goal_date
         }).execute()
         return result.data[0] if result.data else {}
     except Exception as e:
